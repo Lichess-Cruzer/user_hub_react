@@ -1,18 +1,23 @@
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
-import React, { useEffect, useState } from 'react';
+import {
+  storeCurrentUser,
+  clearCurrentUser
+} from '../auth';
 
 import './Header.css';
 
-const Header = ({ 
-    currentUser,
-    setCurrentUser,
-    userList 
+const Header = ({
+  currentUser,
+  setCurrentUser,
+  userList 
 }) => {
-   const [selectedUser, setSelectedUser] = useState();
+  const [selectedUser, setSelectedUser] = useState();
 
-    useEffect(() => {
-      setSelectedUser(userList[0]);
-    }, [userList]);
+  useEffect(() => {
+    setSelectedUser(userList[0]);
+  }, [userList]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -26,10 +31,12 @@ const Header = ({
 
   const handleUserLogin = (event) => {
     setCurrentUser(selectedUser);
+    storeCurrentUser(selectedUser);
   }
 
   const handleUserLogout = (event) => {
     setSelectedUser(userList[0]);
+    clearCurrentUser();
     setCurrentUser(null);
   }
 
@@ -41,7 +48,11 @@ const Header = ({
         onSubmit={ handleSubmit } >
         {
           currentUser
-          ? <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
+          ? <> 
+              <NavLink to="/posts" activeClassName="current">POSTS</NavLink>
+              <NavLink to="/todos" activeClassName="current">TODOS</NavLink >
+              <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
+            </>
           : <>
               <select onChange={ handleSelectChange }>{
                 userList.map(user => (
